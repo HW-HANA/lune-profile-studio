@@ -25,7 +25,7 @@ import {
 import { uid } from "./model";
 import { selectTheme } from "./theme";
 import { parseProject } from "./projectFile";
-import { download, exportCanvas } from "./export";
+import { download, exportCanvas, exportFilename } from "./export";
 import { CropController } from "./CropController";
 import type { CropTarget } from "./crop";
 export default function App() {
@@ -95,20 +95,13 @@ export default function App() {
     setBusy(true);
     setError("");
     try {
-      const { image, width, height } = await exportCanvas(
-        p,
-        format,
-        quality,
-        background,
-      );
-      download(
-        image,
-        `${p.title.replace(/[<>:"/\\|?*]/g, "-") || "主页"}-${width}x${height}.${format}`,
-      );
+      const { image } = await exportCanvas(p, format, quality, background);
+      const filename = exportFilename(p.title, format);
+      download(image, filename);
       const list = [
         {
           id: uid(),
-          title: p.title,
+          title: p.title.trim() || filename.replace(/\.\w+$/, ""),
           created: Date.now(),
           project: structuredClone(p),
           image,
@@ -133,7 +126,7 @@ export default function App() {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(p, null, 2)], { type: "application/json" }),
     );
-    download(url, `${p.title || "profile"}.json`);
+    download(url, exportFilename(p.title, "json"));
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
@@ -429,7 +422,8 @@ export default function App() {
           }}
         >
           <Field
-            label="作品名称"
+            label="文件名"
+            placeholder="留空则为 Lune_日期_时间"
             value={p.title}
             onChange={(v) =>
               change((d) => {

@@ -30,5 +30,20 @@ test("纯动态模式只保留动态流并可持久化导出", async ({ page }) 
   const pending = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出 PNG 图片", exact: true }).click();
   const download = await pending;
-  expect(download.suggestedFilename()).toMatch(/\.png$/);
+  expect(download.suggestedFilename()).toMatch(/^Lune_\d{8}_\d{6}\.png$/);
+});
+
+test("默认主页内容与动态图", async ({ page }) => {
+  await page.goto("/");
+  const card = page.locator("#export-canvas .profile-card");
+  await expect(card.locator("h2")).toContainText("天使用户");
+  await expect(card.locator(".username")).toHaveText("@AngelUser");
+  await expect(card.locator(".post-image img")).toHaveAttribute(
+    "src",
+    "./assets/hands.jpg",
+  );
+  await expect(card.locator(".post-image img")).toHaveJSProperty(
+    "complete",
+    true,
+  );
 });

@@ -84,7 +84,7 @@ export function parseProject(text: string): Project {
       (src) =>
         src &&
         !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(src) &&
-        !/^\.\/assets\/(avatar|cover|coffee|flowers)\.jpg$/.test(src),
+        !/^\.\/assets\/(avatar|cover|coffee|flowers|hands)\.jpg$/.test(src),
     )
   )
     throw new Error("备份中含有不支持的图片来源");

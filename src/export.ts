@@ -7,6 +7,15 @@ export function download(url: string, filename: string) {
   a.download = filename;
   a.click();
 }
+// 截图工具惯例：名称_年月日_时分秒，按时间排序且不会重名。
+export function exportFilename(title: string, ext: string, date = new Date()) {
+  const base = title.trim().replace(/[<>:"/\\|?*\s]+/g, "-") || "Lune";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const stamp =
+    `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_` +
+    `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+  return `${base}_${stamp}.${ext}`;
+}
 export async function exportCanvas(
   project: Project,
   format: "png" | "jpg",

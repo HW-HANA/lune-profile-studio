@@ -159,6 +159,12 @@ test("each post image has its own crop; adding, removing and changing grids reta
   await page.getByRole("tab", { name: "动态内容", exact: true }).click();
   await expect(page.getByLabel("动态图片比例", { exact: true })).toHaveCount(0);
   const thumbs = page.locator(".post-upload-grid .crop-thumb");
+  // 默认动态只有一张图，先补一张以覆盖多图场景。
+  await page
+    .getByLabel("上传动态图片（1/4）", { exact: true })
+    .setInputFiles((await fixture(page)).file);
+  await confirm(page);
+  await expect(thumbs).toHaveCount(2);
   const originalSecond = await imageStyle(
     page,
     "#export-canvas .post-image:nth-child(2) img",
@@ -345,6 +351,7 @@ test("legacy project positions migrate to separate image crops", () => {
   delete p.profile.avatarCrop;
   delete p.profile.coverCrop;
   p.profile.avatarPosition = "25% 70%";
+  p.profile.posts[0].images = ["./assets/coffee.jpg", "./assets/flowers.jpg"];
   p.profile.posts[0].imagePosition = "10% 80%";
   delete p.profile.posts[0].imageCrops;
   const result = parseProject(JSON.stringify(p));
