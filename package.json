@@ -1,0 +1,31 @@
+{
+  "name": "lune-profile-studio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --configLoader runner --host 127.0.0.1 --port 5175",
+    "build": "tsc -b && vite build --configLoader runner",
+    "preview": "vite preview --configLoader runner --host 127.0.0.1",
+    "format": "prettier --write src tests *.json *.ts"
+  },
+  "dependencies": {
+    "@fontsource/dm-serif-display": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "html-to-image": "^1.11.13",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "prettier": "^3.9.9",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.0"
+  }
+}
