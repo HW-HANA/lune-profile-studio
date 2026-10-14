@@ -11,6 +11,7 @@ import {
   SlidersHorizontal,
   UserRound,
   MessageCircle,
+  RotateCcw,
 } from "lucide-react";
 import { Field, IconButton, Modal, ThemeChoices, Toggle } from "./components";
 import { ProfileEditor, PostsEditor, StyleEditor } from "./Editors";
@@ -22,7 +23,7 @@ import {
   useStudio,
   type SavedItem,
 } from "./storage";
-import { uid } from "./model";
+import { initialProject, uid } from "./model";
 import { selectTheme } from "./theme";
 import { parseProject } from "./projectFile";
 import { download, exportCanvas, exportFilename } from "./export";
@@ -54,6 +55,7 @@ export default function App() {
   const [notice, setNotice] = useState("");
   const [history, setHistory] = useState<SavedItem[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
   useEffect(() => {
     void hydrate();
     void readData<SavedItem[]>("exports")
@@ -128,6 +130,21 @@ export default function App() {
     );
     download(url, exportFilename(p.title, "json"));
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function restoreDefaults() {
+    // replace() saves the current draft in undo history before replacing it.
+    replace(initialProject());
+    setResetting(false);
+    setPage("create");
+    setTab("info");
+    setSheet(false);
+    setPreview(false);
+    setCrop(null);
+    setFormat("png");
+    setQuality(1);
+    setBackground(false);
+    setError("");
+    setNotice("已恢复默认，可点击撤销找回刚才的编辑");
   }
   return (
     <div className={`app ${preview ? "preview-mode" : ""}`}>
@@ -269,7 +286,7 @@ export default function App() {
                 </button>
                 <label className="text-button import-project">
                   <FolderOpen size={14} />
-                  恢复项目
+                  恢复备份
                   <input
                     type="file"
                     accept=".json"
@@ -289,6 +306,15 @@ export default function App() {
                     }}
                   />
                 </label>
+                <button
+                  type="button"
+                  className="text-button reset-defaults"
+                  disabled={!ready || busy}
+                  onClick={() => setResetting(true)}
+                >
+                  <RotateCcw size={14} />
+                  恢复默认
+                </button>
               </div>
             </aside>
             {sheet && (
@@ -498,6 +524,35 @@ export default function App() {
           >
             确认删除
           </button>
+        </Modal>
+      )}
+      {resetting && (
+        <Modal
+          title="恢复为默认设置？"
+          subtitle="头像、封面、文字、动态、配色、字体和画布将恢复为初始状态。"
+          onClose={() => setResetting(false)}
+          className="reset-defaults-modal"
+        >
+          <p className="reset-defaults-note">
+            已导出的作品会保留。恢复后，也可以点击「撤销」找回当前编辑。
+          </p>
+          <div className="confirm-actions">
+            <button
+              type="button"
+              className="button"
+              autoFocus
+              onClick={() => setResetting(false)}
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              className="button primary"
+              onClick={restoreDefaults}
+            >
+              确认恢复默认
+            </button>
+          </div>
         </Modal>
       )}
       {notice && (

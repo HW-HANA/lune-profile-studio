@@ -500,6 +500,20 @@ button:active:not(:disabled) {
   border-top: 1px solid var(--line-soft);
   display: flex;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.editor-footer .text-button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+.reset-defaults-note {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.reset-defaults-modal .confirm-actions {
+  margin-top: 24px;
 }
 .text-button {
   display: inline-flex;
