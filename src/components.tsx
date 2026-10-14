@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Upload, X, UserRound, Check } from "lucide-react";
 import { cropStyle, type ImageCrop } from "./crop";
+import { imageFix } from "./imageFix";
 export function Field({
   label,
   value,
@@ -106,22 +107,7 @@ export function Avatar({
   );
 }
 export async function imageData(file: File): Promise<string> {
-  if (
-    !["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)
-  )
-    throw new Error("请选择 JPG、PNG、WebP 或 GIF 图片");
-  if (file.size > 15 * 1024 * 1024) throw new Error("图片不能超过 15 MB");
-  const bitmap = await createImageBitmap(file);
-  const ratio = Math.min(1, 1800 / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * ratio);
-  canvas.height = Math.round(bitmap.height * ratio);
-  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  return canvas.toDataURL(
-    file.type === "image/png" ? "image/png" : "image/jpeg",
-    0.88,
-  );
+  return imageFix.normalizeUpload(file);
 }
 export function UploadField({
   label,
